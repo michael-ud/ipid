@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Is Philip's Internet Down?</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+        }
+        #display {
+            font-size: 10rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="display">...</div>
+
+    <script>
+        // Coordinates for San Francisco
+        const lat = 37.7749;
+        const lon = -122.4194;
+        const url = `https://api.open-meteo.com{lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
+
+        async function checkTemperature() {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const temp = data.current_weather.temperature;
+                
+                const display = document.getElementById('display');
+                if (temp > 72) {
+                    display.innerText = "YES";
+                    display.style.color = "#e63946"; // Red for hot
+                } else {
+                    display.innerText = "NO";
+                    display.style.color = "#457b9d"; // Blue for cool
+                }
+            } catch (error) {
+                document.getElementById('display').innerText = "ERROR";
+                console.error("Failed to fetch weather data:", error);
+            }
+        }
+
+        checkTemperature();
+    </script>
+</body>
+</html>
