@@ -29,18 +29,35 @@
         // Coordinates for San Francisco
         const lat = 37.7749;
         const lon = -122.4194;
-        const url = `https://api.open-meteo.com{lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
 
         async function checkTemperature() {
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 const temp = data.current_weather.temperature;
-                
+
+                const is_between = (opening, closing) => {
+                    const time = new Date().toLocaleTimeString('en-US', {
+                        timeZone: 'America/Los_Angeles',
+                        hour12: false,
+                        hour: 'numeric'
+                    });
+
+                    let hour = parseInt(time);
+
+                    return closing >= hour && hour >= opening;
+                };
+
                 const display = document.getElementById('display');
-                if (temp > 72) {
+                display.title = 'It\'s ${temp} F'
+
+                if (temp > 90) {
                     display.innerText = "YES";
                     display.style.color = "#e63946"; // Red for hot
+                } else if (temp > 75 && is_between(8, 15)) {
+                    display.innerText = "Soon...";
+                    display.style.color = "#ffb703"; // Yellow for hot-ish
                 } else {
                     display.innerText = "NO";
                     display.style.color = "#457b9d"; // Blue for cool
